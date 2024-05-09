@@ -7,27 +7,28 @@ import Loader from '../Loader/Loader';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn';
 import { ImageModal } from '../ImageModal/ImageModal';
-
 import css from './App.module.css';
+import { Photos, Response } from './App.types';
+
+
 
 const App = () => {
   // state variables
-  const [response, setResponse] = useState(null);
-  const [photos, setPhotos] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [page, setPage] = useState(0);
-  const [loadMore, setLoadMore] = useState(false);
-  const [content, setContent] = useState(null);
-  const [query, setQuery] = useState('');
-  const [modalIsOpen, setIsOpen] = useState(false);
+  const [response, setResponse] = useState<Response | null>(null);
+  const [photos, setPhotos] = useState<Photos | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(0);
+  const [loadMore, setLoadMore] = useState<boolean>(false);
+  const [content, setContent] = useState<string | null>(null);
+  const [query, setQuery] = useState<string>('');
+  const [modalIsOpen, setIsOpen] = useState<boolean>(false);
   // fetch photos
 
-  const userQuery = value => {
-    setQuery(value);
-
-    setPage(1);
-    setPhotos(null);
+  const userQuery = (value:string):void => {
+    setQuery(value)
+    setPage(1)
+    setPhotos(null)
   };
 
   useEffect(() => {
@@ -37,7 +38,7 @@ const App = () => {
         setLoading(true);
         setError(false);
 
-        const data = await fetchPhotosByQuery(query, page);
+        const data = await fetchPhotosByQuery<Response>(query, page);
 
         setResponse(data);
 
@@ -47,11 +48,11 @@ const App = () => {
         }
 
         if (photos === null || photos.length === 0) {
-          setPhotos(data.results);
+          setPhotos(data.results as Photos );
         } else if (page > 1) {
-          setPhotos([...photos, ...data.results]);
+          setPhotos([...photos, ...data.results as Photos]);
         } else {
-          setPhotos(data.results);
+          setPhotos(data.results as Photos);
         }
       } catch (error) {
         setError(true);
@@ -66,8 +67,8 @@ const App = () => {
   }, [query, page]);
 
   // load more photos
-  const loadMorePhotos = () => {
-    if (page <= response.total_pages) {
+  const loadMorePhotos = ():void => {
+    if (response && page <= response.total_pages) {
       setPage(page + 1);
     } else {
       setLoadMore(false);
@@ -76,15 +77,15 @@ const App = () => {
   };
 
   // logic of open modal
-  const handleImageClick = url => {
+  const handleImageClick = (url:string):void => {
     setContent(url);
   };
 
-  function openModal() {
+  function openModal():void {
     setIsOpen(true);
   }
 
-  function closeModal() {
+  function closeModal():void {
     setIsOpen(false);
   }
 
