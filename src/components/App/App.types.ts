@@ -1,8 +1,4 @@
-export type Response = {
-    total: number;
-    total_pages: number;
-    results: object[];
-}
+
 
 export interface Photo {
     id: string;
@@ -18,3 +14,9 @@ export interface Photo {
     };
   }
 export type Photos = Photo[];
+
+export type Response = {
+  total: number;
+  total_pages: number;
+  results: Photos;
+}
